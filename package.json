@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/e-macro/nodejs-hw.git"
+    "start": "node src/server.js"
   },
   "keywords": [],
   "author": "Volodymyr Buhlak <suedanny2@yahoo.com>",
