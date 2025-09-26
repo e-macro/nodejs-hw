@@ -3,10 +3,9 @@ import { Schema, model } from "mongoose";
 const noteSchema = new Schema(
   {
     title: {type: String, required: true},
-    content: {type: String, required: false, default: ''},
+    content: {type: String, required: false, default: '', trim: true},
     tag: {
       type: String,
-      required: true,
       enum: [
         'Work',
         'Personal',
