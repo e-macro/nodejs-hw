@@ -1,0 +1,64 @@
+import {Joi, Segments} from 'celebrate';
+import { isValidObjectId } from 'mongoose';
+import { TAGS } from '../constants/tags';
+
+const objectIdValidator = (value, helpers) => {
+  return !isValidObjectId(value)
+  ? helpers.message('Invalid id format')
+  : value;
+};
+
+//для GET /notes
+export const getAllNotesSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20).default(10),
+    tag: Joi.string().valid(...TAGS),
+    search: Joi.string().min(0).max(100),
+  })
+};
+
+//для get /notes/:noteId, delete /notes/:noteId
+export const noteIdSchema = {
+  [Segments.PARAMS]: Joi.object({
+    noteId: Joi.string().custom(objectIdValidator).required(),
+  })
+};
+
+//для post /notes
+export const createNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(1).max(100).required().messages({
+      "string.base": "Title must be a string",
+      "string.min": "Title should have at least {#limit} characters",
+      "string.max": "Title should have at most {#limit} characters",
+      "any.required": "Title is required",
+    }),
+    content: Joi.string().min(0).max(1000).messages({
+      "string.base": "Content must be a string",
+      "string.max": "Content should have at most {#limit} characters",
+    }),
+    tag: Joi.string().valid(...TAGS).required().messages({
+      "any.only": `Tag must be one of the following: ${TAGS.join(', ')}`,
+      "any.required": "Tag is required",
+    }),
+  }),
+};
+
+//для PATCH /notes/:noteId
+export const updateNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(1).max(100).messages({
+      "string.base": "Title must be a string",
+      "string.min": "Title should have at least {#limit} characters",
+      "string.max": "Title should have at most {#limit} characters",
+    }),
+    content: Joi.string().min(0).max(1000).messages({
+      "string.base": "Content must be a string",
+      "string.max": "Content should have at most {#limit} characters",
+    }),
+    tag: Joi.string().valid(...TAGS).messages({
+      "any.only": `Tag must be one of the following: ${TAGS.join(', ')}`,
+    }),
+  }),
+};
