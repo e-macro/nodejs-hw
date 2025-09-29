@@ -15,23 +15,27 @@ export const getAllNotes = async (req, res) => {
   if (tag) {
     notesQuery.where("tag").equals(tag);
   }
-
+  
   if (search) {
-    notesQuery.where("title").regex(new RegExp(search, "i"));
+      notesQuery.or([
+          { title: { $regex: search, $options: "i" } },
+          { content: { $regex: search, $options: "i" } }
+      ]);
   }
 
-  const [totalItems, notes] = await Promise.all([
+  const [totalNotes, notes] = await Promise.all([
     notesQuery.clone().countDocuments(),
     notesQuery
       .skip(skip)
       .limit(perPage)
   ]);
 
-  const totalPages = Math.ceil(totalItems / perPage);
+  const totalPages = Math.ceil(totalNotes / perPage);
   res.status(200).json({
-    totalItems,
+    page,
+    perPage,
+    totalNotes,
     totalPages,
-    currentPage: page,
     notes,
   });
 };
@@ -61,7 +65,7 @@ export const deleteNote = async (req, res, next) => {
     next(createHttpError(404, "Note not found"));
     return;
   }
-  res.status(200).send(note);
+  res.status(200).json(note);
 };
 
 export const updateNote = async (req, res, next) => {

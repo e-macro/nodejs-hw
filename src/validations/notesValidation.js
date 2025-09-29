@@ -1,6 +1,6 @@
 import {Joi, Segments} from 'celebrate';
 import { isValidObjectId } from 'mongoose';
-import { TAGS } from '../constants/tags';
+import { TAGS } from '../constants/tags.js';
 
 const objectIdValidator = (value, helpers) => {
   return !isValidObjectId(value)
@@ -28,9 +28,8 @@ export const noteIdSchema = {
 //для post /notes
 export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
-    title: Joi.string().min(1).max(100).required().messages({
+    title: Joi.string().min(0).max(100).required().allow('').messages({
       "string.base": "Title must be a string",
-      "string.min": "Title should have at least {#limit} characters",
       "string.max": "Title should have at most {#limit} characters",
       "any.required": "Title is required",
     }),
@@ -47,6 +46,9 @@ export const createNoteSchema = {
 
 //для PATCH /notes/:noteId
 export const updateNoteSchema = {
+  [Segments.PARAMS]: Joi.object({
+    noteId: Joi.string().custom(objectIdValidator).required(),
+  }),
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).max(100).messages({
       "string.base": "Title must be a string",
@@ -60,5 +62,7 @@ export const updateNoteSchema = {
     tag: Joi.string().valid(...TAGS).messages({
       "any.only": `Tag must be one of the following: ${TAGS.join(', ')}`,
     }),
+  }).min(1).messages({
+    "object.min": "At least one field must be provided for update",
   }),
 };
