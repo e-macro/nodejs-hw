@@ -14,7 +14,7 @@ export const getAllNotesSchema = {
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20).default(10),
     tag: Joi.string().valid(...TAGS),
-    search: Joi.string().min(0).max(100),
+    search: Joi.string().min(1).max(100).allow(''),
   })
 };
 
@@ -28,7 +28,7 @@ export const noteIdSchema = {
 //для post /notes
 export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
-    title: Joi.string().min(0).max(100).required().allow('').messages({
+    title: Joi.string().min(1).max(100).required().messages({
       "string.base": "Title must be a string",
       "string.max": "Title should have at most {#limit} characters",
       "any.required": "Title is required",
