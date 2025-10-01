@@ -14,7 +14,7 @@ export const getAllNotesSchema = {
     page: Joi.number().integer().min(1).default(1),
     perPage: Joi.number().integer().min(5).max(20).default(10),
     tag: Joi.string().valid(...TAGS),
-    search: Joi.string().min(1).max(100).allow(''),
+    search: Joi.string().max(100).allow(''),
   })
 };
 
@@ -33,7 +33,7 @@ export const createNoteSchema = {
       "string.max": "Title should have at most {#limit} characters",
       "any.required": "Title is required",
     }),
-    content: Joi.string().min(0).max(1000).messages({
+    content: Joi.string().max(1000).allow('').messages({
       "string.base": "Content must be a string",
       "string.max": "Content should have at most {#limit} characters",
     }),
@@ -55,7 +55,7 @@ export const updateNoteSchema = {
       "string.min": "Title should have at least {#limit} characters",
       "string.max": "Title should have at most {#limit} characters",
     }),
-    content: Joi.string().min(0).max(1000).messages({
+    content: Joi.string().max(1000).allow('').messages({
       "string.base": "Content must be a string",
       "string.max": "Content should have at most {#limit} characters",
     }),
