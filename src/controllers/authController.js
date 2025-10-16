@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-import { sendMail } from '../utils/sendMail.js';
+import { sendEmail } from '../utils/sendMail.js';
 
 
 export const registerUser = async (req, res, next) => {
@@ -110,7 +110,7 @@ export const requestResetEmail = async (req, res, next) => {
   });
 
   try {
-    await sendMail({
+    await sendEmail({
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Password Reset',
@@ -137,8 +137,7 @@ export const resetPassword = async (req, res, next) => {
 
   const user = await User.findOne( { _id: payload.sub, email: payload.email } );
   if (!user) {
-    next(createHttpError(404, 'User not found'));
-    return;
+    return next(createHttpError(404, 'User not found'));
   };
 
   const hashedPassword = await bcrypt.hash(password, 10);
