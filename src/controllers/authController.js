@@ -118,7 +118,7 @@ export const requestResetEmail = async (req, res, next) => {
     });
   }
   catch {
-    return next(500, 'Error sending email');
+    return next(createHttpError(500, 'Error sending email'));
   };
 
   res.status(200).json({ message: 'Password reset email sent successfully' }
